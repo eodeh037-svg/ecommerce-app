@@ -41,7 +41,7 @@ export default function CartScreen() {
   }, [items]);
   
   useEffect(() => {
-  console.log('🟢 CART UPDATED:', items);
+  console.log(' CART UPDATED:', items);
   saveCartToStorage(items);
 }, [items]);
 

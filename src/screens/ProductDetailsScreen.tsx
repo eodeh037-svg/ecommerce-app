@@ -66,7 +66,7 @@ export default function ProductDetailsScreen({ route }: Props) {
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
 
-        {/* HERO IMAGE */}
+     
         <Image
           source={{
             uri: product.thumbnail || 'https://via.placeholder.com/500',

@@ -70,10 +70,8 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
   
 
-      {/* HEADER */}
       <Text style={styles.header}>🛍️ EojShop</Text>
 
-      {/* SEARCH BAR */}
       <TextInput
         placeholder="Search for products, brands..."
         value={searchQuery}

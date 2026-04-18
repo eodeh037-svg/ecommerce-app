@@ -1,8 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-/* =======================
-   TYPES
-======================= */
 
 export type Product = {
   id: number;
