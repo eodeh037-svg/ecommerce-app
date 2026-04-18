@@ -46,8 +46,11 @@ export default function HomeScreen() {
     );
   }, [products, searchQuery]);
 
+  const isSearching = searchQuery.trim().length > 0;
+  const showLoader = loading && !isSearching;
+
   const loadMore = async () => {
-    if (loading || isFetchingMore.current) return;
+    if (loading || isFetchingMore.current || isSearching) return;
 
     isFetchingMore.current = true;
 
@@ -62,20 +65,19 @@ export default function HomeScreen() {
 
   const handleAddToCart = (item: any) => {
     dispatch(addToCart(item));
-
     Alert.alert('Added 🛒', `${item.title} added to cart`);
   };
 
+  const isEmptySearch = isSearching && filteredProducts.length === 0;
+
   return (
     <SafeAreaView style={styles.container}>
-  
-
       <Text style={styles.header}>🛍️ EojShop</Text>
 
       <TextInput
         placeholder="Search for products, brands..."
         value={searchQuery}
-        onChangeText={(text) => {dispatch(setSearchQuery(text))}}
+        onChangeText={(text) => dispatch(setSearchQuery(text))}
         style={styles.search}
         placeholderTextColor="#999"
       />
@@ -94,79 +96,71 @@ export default function HomeScreen() {
         )}
       </TouchableOpacity>
 
-      
-      <FlatList
-        data={filteredProducts}
-        keyExtractor={(item) => item.id?.toString()}
-        onEndReached={loadMore}
-        onEndReachedThreshold={0.5}
-        showsVerticalScrollIndicator={false}
-        ListFooterComponent={
-          loading ? (
-            <ActivityIndicator size="large" color="#000" />
-          ) : null
-        }
-        contentContainerStyle={{ paddingBottom: 30 }}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
+   
+      {isEmptySearch ? (
+        <View style={styles.emptyBox}>
+          <Text style={styles.emptyText}>No products found 😢</Text>
+          <Text style={styles.emptySub}>
+            Try another keyword
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredProducts}
+          keyExtractor={(item) => item.id?.toString()}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          showsVerticalScrollIndicator={false}
+          ListFooterComponent={
+            showLoader ? (
+              <ActivityIndicator size="large" color="#000" />
+            ) : null
+          }
+          contentContainerStyle={{ paddingBottom: 30 }}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Image source={{ uri: item.thumbnail }} style={styles.image} />
 
-          
-            <Image
-              source={{ uri: item.thumbnail }}
-              style={styles.image}
-            />
-
-
-            <View style={styles.info}>
-
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('Details', { product: item })
-                }
-              >
-                <Text style={styles.title} numberOfLines={2}>
-                  {item.title}
-                </Text>
-
-                <Text style={styles.price}>₹{item.price}</Text>
-              </TouchableOpacity>
-
-      
-              <View style={styles.actions}>
-
-                <TouchableOpacity
-                  onPress={() => handleAddToCart(item)}
-                  style={styles.cartBtn}
-                >
-                  <Text style={styles.cartText}>Add</Text>
-                </TouchableOpacity>
-
+              <View style={styles.info}>
                 <TouchableOpacity
                   onPress={() =>
                     navigation.navigate('Details', { product: item })
                   }
-                  style={styles.viewBtn}
                 >
-                  <Text style={styles.viewText}>View</Text>
+                  <Text style={styles.title} numberOfLines={2}>
+                    {item.title}
+                  </Text>
+
+                  <Text style={styles.price}>₹{item.price}</Text>
                 </TouchableOpacity>
 
-              </View>
+                <View style={styles.actions}>
+                  <TouchableOpacity
+                    onPress={() => handleAddToCart(item)}
+                    style={styles.cartBtn}
+                  >
+                    <Text style={styles.cartText}>Add</Text>
+                  </TouchableOpacity>
 
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('Details', { product: item })
+                    }
+                    style={styles.viewBtn}
+                  >
+                    <Text style={styles.viewText}>View</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-          </View>
-        )}
-      />
-   
+          )}
+        />
+      )}
     </SafeAreaView>
   );
-}
-
-
-
-const styles = StyleSheet.create({
+}const styles = StyleSheet.create({
   container: {
     flex: 1,
-   
     backgroundColor: '#F6F7FB',
     paddingHorizontal: 14,
     paddingTop: 10,
@@ -205,8 +199,6 @@ const styles = StyleSheet.create({
   image: {
     width: 110,
     height: 110,
-    borderTopLeftRadius: 18,
-    borderBottomLeftRadius: 18,
   },
 
   info: {
@@ -261,7 +253,6 @@ const styles = StyleSheet.create({
     color: '#111',
   },
 
-  /* FLOATING CART */
   floatingCart: {
     position: 'absolute',
     top: '5.8%',
@@ -297,5 +288,25 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 11,
     fontWeight: '900',
+  },
+
+
+  emptyBox: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 80,
+  },
+
+  emptyText: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#111',
+  },
+
+  emptySub: {
+    marginTop: 6,
+    fontSize: 13,
+    color: '#777',
   },
 });
