@@ -5,6 +5,6 @@
     "types": ["react-native"]
 
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "src/App.tsx"],
   "exclude": ["**/node_modules", "**/Pods"]
 }
